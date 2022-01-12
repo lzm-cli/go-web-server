@@ -1,0 +1,23 @@
+group-manager
+.idea
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/client/node_modules
+/client/npm-debug.log*
+/client/yarn-error.log
+/client/yarn.lock
+/client/package-lock.json
+
+# production
+/client/dist
+
+# misc
+.DS_Store
+
+# next
+/client/.next
+/.env
+/config.json
+/vendor
+
