@@ -18,7 +18,6 @@ const (
 )
 
 func AuthenticateUserByOAuth(ctx context.Context, authorizationCode string) (string, error) {
-	var ua string
 	accessToken, scope, err := mixin.AuthorizeToken(ctx, config.C.Mixin.ClientID, config.C.Mixin.ClientSecret, authorizationCode, "")
 	if err != nil {
 		if strings.Contains(err.Error(), "Forbidden") {
@@ -40,19 +39,19 @@ func AuthenticateUserByOAuth(ctx context.Context, authorizationCode string) (str
 	if err != nil {
 		return "", err
 	}
-	authenticationToken, err := generateAuthenticationToken(user.UserId, ua)
+	authenticationToken, err := generateAuthenticationToken(user.UserId, user.AccessToken)
 	if err != nil {
 		return "", session.BadDataError(ctx)
 	}
 	return authenticationToken, nil
 }
 
-func generateAuthenticationToken(userId string, ua string) (string, error) {
+func generateAuthenticationToken(userId string, accessToken string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Id:        userId,
 		ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
 	})
-	sum := sha256.Sum256([]byte(userId + ua))
+	sum := sha256.Sum256([]byte(accessToken))
 	return token.SignedString(sum[:])
 }
 

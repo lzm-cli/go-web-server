@@ -45,7 +45,7 @@ func AuthenticateUserByToken(ctx context.Context, authenticationToken string) (*
 		if user == nil {
 			return nil, session.BadDataError(ctx)
 		}
-		sum := sha256.Sum256([]byte(user.UserId + ua))
+		sum := sha256.Sum256([]byte(user.AccessToken))
 		return sum[:], nil
 	})
 
