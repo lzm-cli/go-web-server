@@ -3,11 +3,11 @@ package routes
 import (
 	"net/http"
 
+	"github.com/dimfeld/httptreemux"
 	"github.com/<%= organization %>/<%= repo %>/middlewares"
 	"github.com/<%= organization %>/<%= repo %>/models"
 	"github.com/<%= organization %>/<%= repo %>/session"
 	"github.com/<%= organization %>/<%= repo %>/views"
-	"github.com/dimfeld/httptreemux"
 )
 
 func registerUser(router *httptreemux.TreeMux) {

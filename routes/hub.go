@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"runtime"
 
+	"github.com/bugsnag/bugsnag-go/errors"
+	"github.com/dimfeld/httptreemux"
 	"github.com/<%= organization %>/<%= repo %>/config"
 	"github.com/<%= organization %>/<%= repo %>/session"
 	"github.com/<%= organization %>/<%= repo %>/views"
-	"github.com/bugsnag/bugsnag-go/errors"
-	"github.com/dimfeld/httptreemux"
 )
 
 func RegisterHanders(router *httptreemux.TreeMux) {

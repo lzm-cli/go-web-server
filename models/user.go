@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/<%= organization %>/<%= repo %>/session"
 	"github.com/<%= organization %>/<%= repo %>/tools"
-	"github.com/golang-jwt/jwt"
 )
 
 type User struct {

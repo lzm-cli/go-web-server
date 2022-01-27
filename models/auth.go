@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/<%= organization %>/<%= repo %>/config"
-	"github.com/<%= organization %>/<%= repo %>/session"
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
+	"github.com/<%= organization %>/<%= repo %>/config"
+	"github.com/<%= organization %>/<%= repo %>/session"
 )
 
 const (

@@ -7,10 +7,10 @@ import (
 	"github.com/<%= organization %>/<%= repo %>/config"
 	"github.com/unrolled/render"
 
-	"github.com/<%= organization %>/<%= repo %>/middlewares"
-	"github.com/<%= organization %>/<%= repo %>/routes"
 	"github.com/dimfeld/httptreemux"
 	"github.com/gorilla/handlers"
+	"github.com/<%= organization %>/<%= repo %>/middlewares"
+	"github.com/<%= organization %>/<%= repo %>/routes"
 )
 
 func StartHTTP() error {

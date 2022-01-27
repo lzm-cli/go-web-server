@@ -102,7 +102,9 @@ func createError(ctx context.Context, status, code int, description string, err 
 			trace = trace + "\n" + err.Error()
 		}
 	}
-
+	if description == "" {
+		description = err.Error()
+	}
 	return Error{
 		Status:      status,
 		Code:        code,
