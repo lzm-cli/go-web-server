@@ -25,7 +25,6 @@ func (User) TableName() string {
 }
 
 func AuthenticateUserByToken(ctx context.Context, authenticationToken string) (*User, error) {
-	var ua string
 	var user *User
 	var queryErr error
 	token, err := jwt.Parse(authenticationToken, func(token *jwt.Token) (interface{}, error) {

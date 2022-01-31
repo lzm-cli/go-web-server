@@ -53,12 +53,5 @@ func CheckIsNotFound(err error) bool {
 }
 
 func runInTransaction(ctx context.Context, fn func(tx *gorm.DB) error) error {
-	tx := db.Begin(&sql.TxOptions{Isolation: sql.LevelSerializable})
-	if tx.Error != nil {
-		return tx.Error
-	}
-	if err := fn(tx); err != nil {
-		return err
-	}
-	return tx.Commit().Error
+	return db.Transaction(fn, &sql.TxOptions{Isolation: sql.LevelSerializable})
 }
