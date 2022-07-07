@@ -7,7 +7,7 @@ import (
 	_ "net/http/pprof"
 	"runtime"
 
-	"github.com/<%= organization %>/<%= repo %>/models"
+	"github.com/<%= organization %>/<%= repo %>/durables"
 	"github.com/<%= organization %>/<%= repo %>/services"
 )
 
@@ -16,7 +16,8 @@ func main() {
 	flag.Parse()
 
 	// database := durable.NewDatabase()
-	models.InitDB()
+	db := durables.InitDB()
+	mixinClient := durables.GetMixinClient()
 	log.Println(*service)
 
 	switch *service {
@@ -26,12 +27,12 @@ func main() {
 			// models.StartWithHttpServiceJob()
 			_ = http.ListenAndServe("0.0.0.0:6060", nil)
 		}()
-		err := StartHTTP()
+		err := StartHTTP(db, mixinClient)
 		if err != nil {
 			log.Println(err)
 		}
 	default:
-		hub := services.NewHub()
+		hub := services.NewHub(db, mixinClient)
 		err := hub.StartService(*service)
 		if err != nil {
 			log.Println(err)

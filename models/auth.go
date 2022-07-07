@@ -69,7 +69,7 @@ func checkAndWriteUser(ctx context.Context, userId, accessToken, fullName, avata
 		AvatarURL:      avatarURL,
 		AccessToken:    accessToken,
 	}
-	if err := createUpdateAllIfExist(user); err != nil {
+	if err := createUpdateAllIfExist(ctx, user); err != nil {
 		return nil, session.TransactionError(ctx, err)
 	}
 	return user, nil

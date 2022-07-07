@@ -1,9 +1,11 @@
 package views
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/<%= organization %>/<%= repo %>/session"
+	"gorm.io/gorm"
 )
 
 type ResponseView struct {
@@ -19,7 +21,9 @@ func RenderDataResponse(w http.ResponseWriter, r *http.Request, view interface{}
 
 func RenderErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	sessionError, ok := err.(session.Error)
-	if !ok {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		sessionError = session.NotFoundError(r.Context(), "")
+	} else if !ok {
 		sessionError = session.ServerError(r.Context(), err)
 	}
 	if sessionError.Code == 10001 {

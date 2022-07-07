@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/<%= organization %>/<%= repo %>/durables"
 	"github.com/<%= organization %>/<%= repo %>/models"
 	"github.com/<%= organization %>/<%= repo %>/session"
 	"github.com/<%= organization %>/<%= repo %>/views"
@@ -32,7 +33,7 @@ func Authenticate(handler http.Handler) http.Handler {
 			return
 		}
 		u, err := models.AuthenticateUserByToken(r.Context(), header[7:])
-		if models.CheckEmptyError(err) != nil {
+		if durables.CheckEmptyError(err) != nil {
 			views.RenderErrorResponse(w, r, err)
 		} else if u == nil {
 			handleUnauthorized(handler, w, r)

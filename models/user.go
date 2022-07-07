@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/<%= organization %>/<%= repo %>/durables"
 	"github.com/<%= organization %>/<%= repo %>/session"
 	"github.com/<%= organization %>/<%= repo %>/tools"
 )
@@ -59,8 +60,8 @@ func AuthenticateUserByToken(ctx context.Context, authenticationToken string) (*
 
 func FindUserById(ctx context.Context, userId string) (*User, error) {
 	var user User
-	err := db.First(&user, "user_id=?", userId).Error
-	if CheckEmptyError(err) != nil {
+	err := session.DB(ctx).First(&user, "user_id=?", userId).Error
+	if durables.CheckEmptyError(err) != nil {
 		return nil, err
 	}
 	if user.UserId == "" {
@@ -75,7 +76,7 @@ func FindUserById(ctx context.Context, userId string) (*User, error) {
 			AvatarURL:      u.AvatarURL,
 			CreatedAt:      u.CreatedAt,
 		}
-		if err := db.Create(&user).Error; err != nil {
+		if err := session.DB(ctx).Create(&user).Error; err != nil {
 			tools.Log(err)
 		}
 		return nil, nil
