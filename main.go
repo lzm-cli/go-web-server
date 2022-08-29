@@ -16,7 +16,7 @@ func main() {
 	flag.Parse()
 
 	// database := durable.NewDatabase()
-	db := durables.InitDB()
+	db := durables.NewDB()
 	mixinClient := durables.GetMixinClient()
 	log.Println(*service)
 

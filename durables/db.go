@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func InitDB() *gorm.DB {
+func NewDB() *gorm.DB {
 	db, err := gorm.Open(postgres.Open(fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 		config.C.Database.Host,
 		config.C.Database.Port,
@@ -18,7 +18,7 @@ func InitDB() *gorm.DB {
 		config.C.Database.Name,
 		config.C.Database.Password)),
 		&gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
+			Logger: logger.Default.LogMode(logger.Error),
 		},
 	)
 	if err != nil {

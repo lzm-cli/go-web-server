@@ -17,7 +17,7 @@ import (
 
 func StartHTTP(db *gorm.DB, client *mixin.Client) error {
 	router := httptreemux.New()
-	routes.RegisterHanders(router)
+	routes.RegisterHandlers(router)
 	routes.RegisterRoutes(router)
 	handler := middlewares.Authenticate(router)
 	handler = middlewares.Constraint(handler)

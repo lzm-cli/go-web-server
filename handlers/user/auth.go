@@ -1,4 +1,4 @@
-package models
+package user
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
 	"github.com/<%= organization %>/<%= repo %>/config"
+	"github.com/<%= organization %>/<%= repo %>/models"
 	"github.com/<%= organization %>/<%= repo %>/session"
 )
 
@@ -55,21 +56,21 @@ func generateAuthenticationToken(userId string, accessToken string) (string, err
 	return token.SignedString(sum[:])
 }
 
-func checkAndWriteUser(ctx context.Context, userId, accessToken, fullName, avatarURL, identityNumber, biography string) (*User, error) {
+func checkAndWriteUser(ctx context.Context, userId, accessToken, fullName, avatarURL, identityNumber, biography string) (*models.User, error) {
 	if _, err := uuid.FromString(userId); err != nil {
 		return nil, session.BadDataError(ctx)
 	}
 	if avatarURL == "" {
 		avatarURL = DefaultAvatar
 	}
-	user := &User{
+	user := &models.User{
 		UserId:         userId,
 		FullName:       fullName,
 		IdentityNumber: identityNumber,
 		AvatarURL:      avatarURL,
 		AccessToken:    accessToken,
 	}
-	if err := createUpdateAllIfExist(ctx, user); err != nil {
+	if err := models.CreateUpdateAllIfExist(ctx, user); err != nil {
 		return nil, session.TransactionError(ctx, err)
 	}
 	return user, nil

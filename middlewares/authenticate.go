@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/<%= organization %>/<%= repo %>/durables"
+	"github.com/<%= organization %>/<%= repo %>/handlers/user"
 	"github.com/<%= organization %>/<%= repo %>/models"
 	"github.com/<%= organization %>/<%= repo %>/session"
 	"github.com/<%= organization %>/<%= repo %>/views"
@@ -32,7 +33,7 @@ func Authenticate(handler http.Handler) http.Handler {
 			handleUnauthorized(handler, w, r)
 			return
 		}
-		u, err := models.AuthenticateUserByToken(r.Context(), header[7:])
+		u, err := user.AuthenticateUserByToken(r.Context(), header[7:])
 		if durables.CheckEmptyError(err) != nil {
 			views.RenderErrorResponse(w, r, err)
 		} else if u == nil {
