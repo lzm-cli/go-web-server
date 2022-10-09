@@ -1,9 +1,14 @@
 package durables
 
 import (
+	"context"
+
 	"github.com/fox-one/mixin-sdk-go"
 	"github.com/<%= organization %>/<%= repo %>/config"
+	"github.com/<%= organization %>/<%= repo %>/session"
 )
+
+var MixinCtx context.Context
 
 func GetMixinClient() *mixin.Client {
 	client, err := mixin.NewFromKeystore(&mixin.Keystore{
@@ -15,5 +20,7 @@ func GetMixinClient() *mixin.Client {
 	if err != nil {
 		panic(err)
 	}
+
+	MixinCtx = session.WithMixinClient(context.Background(), client)
 	return client
 }

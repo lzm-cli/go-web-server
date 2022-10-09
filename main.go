@@ -8,6 +8,7 @@ import (
 	"runtime"
 
 	"github.com/<%= organization %>/<%= repo %>/durables"
+	"github.com/<%= organization %>/<%= repo %>/jobs"
 	"github.com/<%= organization %>/<%= repo %>/services"
 )
 
@@ -24,10 +25,10 @@ func main() {
 	case "http":
 		go func() {
 			runtime.SetBlockProfileRate(1) // 开启对阻塞操作的跟踪
-			// models.StartWithHttpServiceJob()
 			_ = http.ListenAndServe("0.0.0.0:6060", nil)
 		}()
 		err := StartHTTP(db, mixinClient)
+		jobs.StartWithHttpServiceJob()
 		if err != nil {
 			log.Println(err)
 		}
