@@ -27,7 +27,7 @@ func UseAutoFasterRoute() {
 }
 
 func useApi(url string) <-chan string {
-	r := make(chan string)
+	r := make(chan string, 1)
 	go func() {
 		defer close(r)
 		_, err := http.Get(url)
@@ -39,7 +39,7 @@ func useApi(url string) <-chan string {
 }
 
 func timer() <-chan string {
-	r := make(chan string)
+	r := make(chan string, 1)
 	go func() {
 		defer close(r)
 		time.Sleep(time.Second * 10)
