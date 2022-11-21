@@ -18,19 +18,19 @@ func AuthenticateUserByToken(ctx context.Context, authenticationToken string) (*
 	token, err := jwt.Parse(authenticationToken, func(token *jwt.Token) (interface{}, error) {
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			return nil, session.BadDataError(ctx)
+			return nil, session.BadDataError()
 		}
 
 		_, ok = token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
-			return nil, session.BadDataError(ctx)
+			return nil, session.BadDataError()
 		}
 		user, queryErr = FindUserById(ctx, fmt.Sprint(claims["jti"]))
 		if queryErr != nil {
 			return nil, queryErr
 		}
 		if user == nil {
-			return nil, session.BadDataError(ctx)
+			return nil, session.BadDataError()
 		}
 		sum := sha256.Sum256([]byte(user.AccessToken))
 		return sum[:], nil

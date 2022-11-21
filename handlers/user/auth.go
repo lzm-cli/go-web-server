@@ -22,19 +22,19 @@ func AuthenticateUserByOAuth(ctx context.Context, authorizationCode string) (str
 	accessToken, scope, err := mixin.AuthorizeToken(ctx, config.C.Mixin.ClientID, config.C.Mixin.ClientSecret, authorizationCode, "")
 	if err != nil {
 		if strings.Contains(err.Error(), "Forbidden") {
-			return "", session.ForbiddenError(ctx)
+			return "", session.ForbiddenError()
 		}
-		return "", session.BadDataError(ctx)
+		return "", session.BadDataError()
 	}
 	if !strings.Contains(scope, "PROFILE:READ") {
-		return "", session.ForbiddenError(ctx)
+		return "", session.ForbiddenError()
 	}
 	me, err := mixin.UserMe(ctx, accessToken)
 	if err != nil {
 		return "", err
 	}
 	if me == nil {
-		return "", session.BadDataError(ctx)
+		return "", session.BadDataError()
 	}
 	user, err := checkAndWriteUser(ctx, me.UserID, accessToken, me.FullName, me.AvatarURL, me.IdentityNumber, me.Biography)
 	if err != nil {
@@ -42,7 +42,7 @@ func AuthenticateUserByOAuth(ctx context.Context, authorizationCode string) (str
 	}
 	authenticationToken, err := generateAuthenticationToken(user.UserId, user.AccessToken)
 	if err != nil {
-		return "", session.BadDataError(ctx)
+		return "", session.BadDataError()
 	}
 	return authenticationToken, nil
 }
@@ -58,7 +58,7 @@ func generateAuthenticationToken(userId string, accessToken string) (string, err
 
 func checkAndWriteUser(ctx context.Context, userId, accessToken, fullName, avatarURL, identityNumber, biography string) (*models.User, error) {
 	if _, err := uuid.FromString(userId); err != nil {
-		return nil, session.BadDataError(ctx)
+		return nil, session.BadDataError()
 	}
 	if avatarURL == "" {
 		avatarURL = DefaultAvatar
@@ -71,7 +71,7 @@ func checkAndWriteUser(ctx context.Context, userId, accessToken, fullName, avata
 		AccessToken:    accessToken,
 	}
 	if err := models.CreateUpdateAllIfExist(ctx, user); err != nil {
-		return nil, session.TransactionError(ctx, err)
+		return nil, session.TransactionError(err)
 	}
 	return user, nil
 }

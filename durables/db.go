@@ -10,8 +10,18 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+var DB *gorm.DB
+
+func GetDB() *gorm.DB {
+	if DB == nil {
+		NewDB()
+	}
+	return DB
+}
+
 func NewDB() *gorm.DB {
-	db, err := gorm.Open(postgres.Open(fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+	var err error
+	DB, err = gorm.Open(postgres.Open(fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 		config.C.Database.Host,
 		config.C.Database.Port,
 		config.C.Database.User,
@@ -24,8 +34,7 @@ func NewDB() *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
-	// db.AutoMigrate(&User{})
-	return db
+	return DB
 }
 
 func CheckEmptyError(err error) error {

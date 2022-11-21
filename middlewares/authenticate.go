@@ -56,5 +56,5 @@ func handleUnauthorized(handler http.Handler, w http.ResponseWriter, r *http.Req
 		}
 	}
 
-	views.RenderErrorResponse(w, r, session.AuthorizationError(r.Context()))
+	views.RenderErrorResponse(w, r, session.AuthorizationError())
 }

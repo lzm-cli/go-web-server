@@ -21,7 +21,7 @@ type usersImpl struct{}
 
 func (impl *usersImpl) authenticate(w http.ResponseWriter, r *http.Request, _ map[string]string) {
 	if err := r.ParseForm(); err != nil {
-		views.RenderErrorResponse(w, r, session.BadDataError(r.Context()))
+		views.RenderErrorResponse(w, r, session.BadDataError())
 		return
 	}
 	code := r.Form.Get("code")

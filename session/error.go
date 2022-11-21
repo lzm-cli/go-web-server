@@ -1,7 +1,6 @@
 package session
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -30,68 +29,66 @@ func ParseError(err string) (Error, bool) {
 	return sessionErr, sessionErr.Code > 0 && sessionErr.Description != ""
 }
 
-func BadRequestError(ctx context.Context) Error {
+func BadRequestError() Error {
 	description := "The request body can’t be pasred as valid data."
-	return createError(ctx, http.StatusAccepted, http.StatusBadRequest, description, nil)
+	return createError(http.StatusAccepted, http.StatusBadRequest, description, nil)
 }
 
-func NotFoundError(ctx context.Context, description string) Error {
-	if description == "" {
-		description = "The endpoint is not found."
-	}
-	return createError(ctx, http.StatusAccepted, http.StatusNotFound, description, nil)
+func NotFoundError() Error {
+	description := "The endpoint is not found."
+	return createError(http.StatusAccepted, http.StatusNotFound, description, nil)
 }
 
-func AuthorizationError(ctx context.Context) Error {
+func AuthorizationError() Error {
 	description := "Unauthorized, maybe invalid token."
-	return createError(ctx, http.StatusAccepted, 401, description, nil)
+	return createError(http.StatusAccepted, 401, description, nil)
 }
 
-func ForbiddenError(ctx context.Context) Error {
+func ForbiddenError() Error {
 	description := http.StatusText(http.StatusForbidden)
-	return createError(ctx, http.StatusAccepted, http.StatusForbidden, description, nil)
+	return createError(http.StatusAccepted, http.StatusForbidden, description, nil)
 }
 
-func ValidationError(ctx context.Context, description string) Error {
-	return createError(ctx, http.StatusAccepted, http.StatusBadRequest, description, nil)
+func ValidationError(description string) Error {
+	return createError(http.StatusAccepted, http.StatusBadRequest, description, nil)
 }
 
-func TooManyRequestsError(ctx context.Context) Error {
+func TooManyRequestsError() Error {
 	description := http.StatusText(http.StatusTooManyRequests)
-	return createError(ctx, http.StatusAccepted, http.StatusTooManyRequests, description, nil)
+	return createError(http.StatusAccepted, http.StatusTooManyRequests, description, nil)
 }
 
-func ServerError(ctx context.Context, err error) Error {
+func ServerError(err error) Error {
 	description := http.StatusText(http.StatusInternalServerError)
-	return createError(ctx, http.StatusInternalServerError, http.StatusInternalServerError, description, err)
+	return createError(http.StatusInternalServerError, http.StatusInternalServerError, description, nil)
 }
 
-func BlazeServerError(ctx context.Context, err error) Error {
+func BlazeServerError(err error) Error {
 	description := "Blaze server error."
-	return createError(ctx, http.StatusInternalServerError, 7000, description, err)
+	return createError(http.StatusInternalServerError, 7000, description, nil)
 }
 
-func BlazeTimeoutError(ctx context.Context, err error) Error {
+func BlazeTimeoutError(err error) Error {
 	description := "The blaze operation timeout."
-	return createError(ctx, http.StatusInternalServerError, 7001, description, err)
+	return createError(http.StatusInternalServerError, 7001, description, nil)
 }
 
-func TransactionError(ctx context.Context, err error) Error {
+func TransactionError(err error) Error {
 	description := http.StatusText(http.StatusInternalServerError)
-	return createError(ctx, http.StatusInternalServerError, 10001, description, err)
+	return createError(http.StatusInternalServerError, 10001, description, nil)
 }
 
-func BadDataError(ctx context.Context) Error {
+func BadDataError() Error {
 	description := "The request data has invalid field."
-	return createError(ctx, http.StatusAccepted, 10002, description, nil)
+	return createError(http.StatusAccepted, 10002, description, nil)
 }
 
-func InsufficientAccountBalanceError(ctx context.Context) Error {
+func InsufficientAccountBalanceError() Error {
 	description := "Insufficient balance."
-	return createError(ctx, http.StatusAccepted, 20117, description, nil)
+	return createError(http.StatusAccepted, 20117, description, nil)
 }
 
-func createError(ctx context.Context, status, code int, description string, err error) Error {
+func createError(status, code int, description string, err error) Error {
 	pc, file, line, _ := runtime.Caller(2)
 	funcName := runtime.FuncForPC(pc).Name()
 	trace := fmt.Sprintf("[ERROR %d] %s\n%s:%d %s", code, description, file, line, funcName)

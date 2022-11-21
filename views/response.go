@@ -22,9 +22,9 @@ func RenderDataResponse(w http.ResponseWriter, r *http.Request, view interface{}
 func RenderErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	sessionError, ok := err.(session.Error)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		sessionError = session.NotFoundError(r.Context(), "")
+		sessionError = session.ValidationError("record not found")
 	} else if !ok {
-		sessionError = session.ServerError(r.Context(), err)
+		sessionError = session.ServerError(err)
 	}
 	if sessionError.Code == 10001 {
 		sessionError.Code = 500
