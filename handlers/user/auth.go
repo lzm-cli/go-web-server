@@ -14,10 +14,6 @@ import (
 	"github.com/lzm-cli/gin-web-server-template/session"
 )
 
-const (
-	DefaultAvatar = "https://images.mixin.one/E2y0BnTopFK9qey0YI-8xV3M82kudNnTaGw0U5SU065864SsewNUo6fe9kDF1HIzVYhXqzws4lBZnLj1lPsjk-0=s128"
-)
-
 func AuthenticateUserByOAuth(ctx *gin.Context, authorizationCode string) (string, error) {
 	accessToken, scope, err := mixin.AuthorizeToken(ctx, config.C.Mixin.ClientID, config.C.Mixin.ClientSecret, authorizationCode, "")
 	if err != nil {
@@ -40,28 +36,25 @@ func AuthenticateUserByOAuth(ctx *gin.Context, authorizationCode string) (string
 	if err != nil {
 		return "", err
 	}
-	authenticationToken, err := generateAuthenticationToken(user.UserId, user.AccessToken)
+	authenticationToken, err := generateAuthenticationToken(user.UserId)
 	if err != nil {
 		return "", session.BadDataError()
 	}
 	return authenticationToken, nil
 }
 
-func generateAuthenticationToken(userId string, accessToken string) (string, error) {
+func generateAuthenticationToken(userId string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Id:        userId,
 		ExpiresAt: time.Now().Add(time.Hour * 24 * 7).Unix(),
 	})
-	sum := sha256.Sum256([]byte(accessToken))
+	sum := sha256.Sum256([]byte(config.C.Key))
 	return token.SignedString(sum[:])
 }
 
 func checkAndWriteUser(ctx *gin.Context, userId, accessToken, fullName, avatarURL, identityNumber, biography string) (*models.User, error) {
 	if _, err := uuid.FromString(userId); err != nil {
 		return nil, session.BadDataError()
-	}
-	if avatarURL == "" {
-		avatarURL = DefaultAvatar
 	}
 	user := &models.User{
 		UserId:         userId,

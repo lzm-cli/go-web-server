@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/lzm-cli/gin-web-server-template/config"
 	"github.com/lzm-cli/gin-web-server-template/durables"
 	"github.com/lzm-cli/gin-web-server-template/models"
 	"github.com/lzm-cli/gin-web-server-template/session"
@@ -32,7 +33,7 @@ func AuthenticateUserByToken(ctx *gin.Context, authenticationToken string) (*mod
 		if user == nil {
 			return nil, session.BadDataError()
 		}
-		sum := sha256.Sum256([]byte(user.AccessToken))
+		sum := sha256.Sum256([]byte(config.C.Key))
 		return sum[:], nil
 	})
 
