@@ -1,60 +1,60 @@
 package middlewares
 
 import (
-	"context"
-	"net/http"
+	"log"
 	"regexp"
 	"strings"
 
-	"github.com/<%= organization %>/<%= repo %>/durables"
-	"github.com/<%= organization %>/<%= repo %>/handlers/user"
-	"github.com/<%= organization %>/<%= repo %>/models"
-	"github.com/<%= organization %>/<%= repo %>/session"
-	"github.com/<%= organization %>/<%= repo %>/views"
+	"github.com/gin-gonic/gin"
+	"github.com/lzm-cli/gin-web-server-template/durables"
+	"github.com/lzm-cli/gin-web-server-template/handlers/user"
+	"github.com/lzm-cli/gin-web-server-template/models"
+	"github.com/lzm-cli/gin-web-server-template/session"
+	"github.com/lzm-cli/gin-web-server-template/views"
 )
 
 var whitelist = [][2]string{
 	{"GET", "^/auth$"},
+	{"GET", "^/$"},
+	{"GET", "^/_hc$"},
 }
 
-type contextValueKey struct{ int }
-
-var keyCurrentUser = contextValueKey{1000}
-
-func CurrentUser(r *http.Request) *models.User {
-	u, _ := r.Context().Value(keyCurrentUser).(*models.User)
+func CurrentUser(r *gin.Context) *models.User {
+	u, _ := r.Value("u").(*models.User)
 	return u
 }
 
-func Authenticate(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		header := r.Header.Get("Authorization")
+func Authenticate() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		log.Println(2)
+		header := ctx.Request.Header.Get("Authorization")
 		if !strings.HasPrefix(header, "Bearer ") {
-			handleUnauthorized(handler, w, r)
+			handleUnauthorized(ctx)
 			return
 		}
-		u, err := user.AuthenticateUserByToken(r.Context(), header[7:])
+		log.Println(2.5)
+		u, err := user.AuthenticateUserByToken(ctx, header[7:])
 		if durables.CheckEmptyError(err) != nil {
-			views.RenderErrorResponse(w, r, err)
+			views.RenderErrorResponse(ctx, err)
 		} else if u == nil {
-			handleUnauthorized(handler, w, r)
+			handleUnauthorized(ctx)
 		} else {
-			ctx := context.WithValue(r.Context(), keyCurrentUser, u)
-			handler.ServeHTTP(w, r.WithContext(ctx))
+			ctx.Set("u", u)
+			log.Println()
+			ctx.Next()
 		}
-	})
+	}
 }
 
-func handleUnauthorized(handler http.Handler, w http.ResponseWriter, r *http.Request) {
+func handleUnauthorized(ctx *gin.Context) {
 	for _, pp := range whitelist {
-		if pp[0] != r.Method {
+		if pp[0] != ctx.Request.Method {
 			continue
 		}
-		if matched, err := regexp.MatchString(pp[1], r.URL.Path); err == nil && matched {
-			handler.ServeHTTP(w, r)
+		if matched, err := regexp.MatchString(pp[1], ctx.Request.URL.Path); err == nil && matched {
+			ctx.Next()
 			return
 		}
 	}
-
-	views.RenderErrorResponse(w, r, session.AuthorizationError())
+	views.RenderErrorResponse(ctx, session.AuthorizationError())
 }

@@ -1,18 +1,18 @@
 package user
 
 import (
-	"context"
 	"crypto/sha256"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"github.com/<%= organization %>/<%= repo %>/durables"
-	"github.com/<%= organization %>/<%= repo %>/models"
-	"github.com/<%= organization %>/<%= repo %>/session"
-	"github.com/<%= organization %>/<%= repo %>/tools"
+	"github.com/lzm-cli/gin-web-server-template/durables"
+	"github.com/lzm-cli/gin-web-server-template/models"
+	"github.com/lzm-cli/gin-web-server-template/session"
+	"github.com/lzm-cli/gin-web-server-template/tools"
 )
 
-func AuthenticateUserByToken(ctx context.Context, authenticationToken string) (*models.User, error) {
+func AuthenticateUserByToken(ctx *gin.Context, authenticationToken string) (*models.User, error) {
 	var user *models.User
 	var queryErr error
 	token, err := jwt.Parse(authenticationToken, func(token *jwt.Token) (interface{}, error) {
@@ -45,7 +45,7 @@ func AuthenticateUserByToken(ctx context.Context, authenticationToken string) (*
 	return user, nil
 }
 
-func FindUserById(ctx context.Context, userId string) (*models.User, error) {
+func FindUserById(ctx *gin.Context, userId string) (*models.User, error) {
 	var user models.User
 	err := session.DB(ctx).First(&user, "user_id=?", userId).Error
 	if durables.CheckEmptyError(err) != nil {

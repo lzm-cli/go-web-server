@@ -1,17 +1,16 @@
 package models
 
 import (
-	"context"
-
-	"github.com/<%= organization %>/<%= repo %>/durables"
-	"github.com/<%= organization %>/<%= repo %>/session"
+	"github.com/gin-gonic/gin"
+	"github.com/lzm-cli/gin-web-server-template/durables"
+	"github.com/lzm-cli/gin-web-server-template/session"
 )
 
-var Ctx context.Context
+var Ctx gin.Context
 
 func init() {
 	db := durables.NewDB()
-	Ctx = session.WithDatabase(context.Background(), db)
+	session.WithDatabase(&Ctx, db)
 	db.AutoMigrate(
 		&User{},
 	)

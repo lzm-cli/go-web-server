@@ -1,20 +1,18 @@
 package middlewares
 
 import (
-	"net/http"
+	"log"
 
 	"github.com/fox-one/mixin-sdk-go"
-	"github.com/<%= organization %>/<%= repo %>/session"
-	"github.com/unrolled/render"
+	"github.com/gin-gonic/gin"
+	"github.com/lzm-cli/gin-web-server-template/session"
 	"gorm.io/gorm"
 )
 
-func Context(handler http.Handler, db *gorm.DB, client *mixin.Client, render *render.Render) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := session.WithRequest(r.Context(), r)
-		ctx = session.WithMixinClient(ctx, client)
-		ctx = session.WithDatabase(ctx, db)
-		ctx = session.WithRender(ctx, render)
-		handler.ServeHTTP(w, r.WithContext(ctx))
-	})
+func Context(db *gorm.DB, client *mixin.Client) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		log.Println(3)
+		session.WithDatabase(ctx, db)
+		ctx.Next()
+	}
 }

@@ -25,6 +25,7 @@ type config struct {
 		PrivateKey   string `json:"private_key"`
 		PIN          string `json:"pin"`
 	} `json:"mixin"`
+	Admin map[string]bool `json:"admin"`
 }
 
 var C config

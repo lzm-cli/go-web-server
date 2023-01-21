@@ -4,7 +4,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/<%= organization %>/<%= repo %>/session"
+	"github.com/gin-gonic/gin"
+	"github.com/lzm-cli/gin-web-server-template/session"
+	"github.com/lzm-cli/gin-web-server-template/tools"
 	"gorm.io/gorm"
 )
 
@@ -15,23 +17,28 @@ type ResponseView struct {
 	Next  string      `json:"next,omitempty"`
 }
 
-func RenderDataResponse(w http.ResponseWriter, r *http.Request, view interface{}) {
-	session.Render(r.Context()).JSON(w, http.StatusOK, ResponseView{Data: view})
+func RenderDataResponse(c *gin.Context, view interface{}) {
+	c.JSON(http.StatusOK, ResponseView{Data: view})
+	c.Abort()
 }
 
-func RenderErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
+func RenderErrorResponse(c *gin.Context, err error) {
 	sessionError, ok := err.(session.Error)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		sessionError = session.ValidationError("record not found")
 	} else if !ok {
 		sessionError = session.ServerError(err)
+		tools.Log(err)
+		tools.PrintJson(c.Request)
 	}
 	if sessionError.Code == 10001 {
 		sessionError.Code = 500
 	}
-	session.Render(r.Context()).JSON(w, sessionError.Status, ResponseView{Error: sessionError})
+	c.JSON(sessionError.Status, ResponseView{Error: sessionError})
+	c.Abort()
 }
 
-func RenderBlankResponse(w http.ResponseWriter, r *http.Request) {
-	session.Render(r.Context()).JSON(w, http.StatusOK, ResponseView{})
+func RenderBlankResponse(c *gin.Context) {
+	c.JSON(http.StatusOK, ResponseView{})
+	c.Abort()
 }

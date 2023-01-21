@@ -7,9 +7,9 @@ import (
 	_ "net/http/pprof"
 	"runtime"
 
-	"github.com/<%= organization %>/<%= repo %>/durables"
-	"github.com/<%= organization %>/<%= repo %>/jobs"
-	"github.com/<%= organization %>/<%= repo %>/services"
+	"github.com/lzm-cli/gin-web-server-template/durables"
+	"github.com/lzm-cli/gin-web-server-template/jobs"
+	"github.com/lzm-cli/gin-web-server-template/services"
 )
 
 func main() {

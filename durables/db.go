@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/<%= organization %>/<%= repo %>/config"
+	"github.com/lzm-cli/gin-web-server-template/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

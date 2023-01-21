@@ -1,16 +1,13 @@
 package routes
 
 import (
-	"net/http"
-
-	"github.com/dimfeld/httptreemux"
-	"github.com/<%= organization %>/<%= repo %>/handlers/user"
-	"github.com/<%= organization %>/<%= repo %>/middlewares"
-	"github.com/<%= organization %>/<%= repo %>/session"
-	"github.com/<%= organization %>/<%= repo %>/views"
+	"github.com/gin-gonic/gin"
+	"github.com/lzm-cli/gin-web-server-template/handlers/user"
+	"github.com/lzm-cli/gin-web-server-template/middlewares"
+	"github.com/lzm-cli/gin-web-server-template/views"
 )
 
-func registerUser(router *httptreemux.TreeMux) {
+func registerUser(router *gin.Engine) {
 	impl := &usersImpl{}
 
 	router.GET("/auth", impl.authenticate)
@@ -19,29 +16,15 @@ func registerUser(router *httptreemux.TreeMux) {
 
 type usersImpl struct{}
 
-func (impl *usersImpl) authenticate(w http.ResponseWriter, r *http.Request, _ map[string]string) {
-	if err := r.ParseForm(); err != nil {
-		views.RenderErrorResponse(w, r, session.BadDataError())
-		return
-	}
-	code := r.Form.Get("code")
-	if token, err := user.AuthenticateUserByOAuth(r.Context(), code); err != nil {
-		views.RenderErrorResponse(w, r, err)
+func (impl *usersImpl) authenticate(c *gin.Context) {
+	code := c.Query("code")
+	if token, err := user.AuthenticateUserByOAuth(c, code); err != nil {
+		views.RenderErrorResponse(c, err)
 	} else {
-		views.RenderDataResponse(w, r, token)
+		views.RenderDataResponse(c, token)
 	}
 }
 
-func (impl *usersImpl) me(w http.ResponseWriter, r *http.Request, _ map[string]string) {
-	views.RenderDataResponse(w, r, middlewares.CurrentUser(r))
+func (impl *usersImpl) me(c *gin.Context) {
+	views.RenderDataResponse(c, middlewares.CurrentUser(c))
 }
-
-// POST demo
-// var body models.User
-// if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-// 	views.RenderErrorResponse(w, r, session.BadRequestError(r.Context()))
-// } else if err := user.UpdateUserProfile(r.Context(), middlewares.CurrentUser(r), body.Biography, body.Website); err != nil {
-// 	views.RenderErrorResponse(w, r, err)
-// } else {
-// 	views.RenderDataResponse(w, r, "success")
-// }
