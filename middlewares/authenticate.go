@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lzm-cli/gin-web-server-template/config"
 	"github.com/lzm-cli/gin-web-server-template/durables"
 	"github.com/lzm-cli/gin-web-server-template/handlers/user"
 	"github.com/lzm-cli/gin-web-server-template/models"
@@ -26,19 +27,20 @@ func CurrentUser(r *gin.Context) *models.User {
 
 func Authenticate() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		log.Println(2)
 		header := ctx.Request.Header.Get("Authorization")
 		if !strings.HasPrefix(header, "Bearer ") {
 			handleUnauthorized(ctx)
 			return
 		}
-		log.Println(2.5)
 		u, err := user.AuthenticateUserByToken(ctx, header[7:])
 		if durables.CheckEmptyError(err) != nil {
 			views.RenderErrorResponse(ctx, err)
 		} else if u == nil {
 			handleUnauthorized(ctx)
 		} else {
+			if strings.Contains(ctx.Request.URL.Path, "/admin") && !config.C.Admin[u.UserId] {
+				views.RenderErrorResponse(ctx, session.ForbiddenError())
+			}
 			ctx.Set("u", u)
 			log.Println()
 			ctx.Next()

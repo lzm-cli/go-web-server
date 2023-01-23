@@ -2,11 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
 	"runtime"
 
+	"github.com/lzm-cli/gin-web-server-template/config"
 	"github.com/lzm-cli/gin-web-server-template/durables"
 	"github.com/lzm-cli/gin-web-server-template/jobs"
 	"github.com/lzm-cli/gin-web-server-template/services"
@@ -25,10 +27,10 @@ func main() {
 	case "http":
 		go func() {
 			runtime.SetBlockProfileRate(1) // 开启对阻塞操作的跟踪
-			_ = http.ListenAndServe("0.0.0.0:6060", nil)
+			_ = http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", config.C.MonitorPort), nil)
 		}()
+		go jobs.StartWithHttpServiceJob()
 		err := StartHTTP(db, mixinClient)
-		jobs.StartWithHttpServiceJob()
 		if err != nil {
 			log.Println(err)
 		}

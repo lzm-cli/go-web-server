@@ -7,7 +7,7 @@ import (
 	"github.com/lzm-cli/gin-web-server-template/views"
 )
 
-func registerUser(router *gin.Engine) {
+func registerUser(router *gin.RouterGroup) {
 	impl := &usersImpl{}
 
 	router.GET("/auth", impl.authenticate)

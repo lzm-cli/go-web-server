@@ -9,8 +9,9 @@ import (
 const BuildVersion = "0.0.1"
 
 type config struct {
-	Port     int `json:"port"`
-	Database struct {
+	Port        int `json:"port"`
+	MonitorPort int `json:"monitor_port"`
+	Database    struct {
 		User     string `json:"user"`
 		Password string `json:"password"`
 		Host     string `json:"host"`
