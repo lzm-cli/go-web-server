@@ -1,10 +1,12 @@
 {
+  "lang": "zh",
   "port": 7002,
+  "monitor_port": 6060,
   "database": {
-    "user": "",
-    "password": "",
-    "host": "",
-    "port": "",
+    "user": "postgres",
+    "password": "postgres",
+    "host": "localhost",
+    "port": "5432",
     "name": ""
   },
   "mixin": {
