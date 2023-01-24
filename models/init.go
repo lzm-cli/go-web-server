@@ -4,12 +4,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/lzm-cli/gin-web-server-template/durables"
-	"github.com/lzm-cli/gin-web-server-template/session"
 )
-
-var Ctx gin.Context
 
 type Model struct {
 	ID        uint         `json:"id,omitempty" gorm:"primarykey"`
@@ -19,7 +15,7 @@ type Model struct {
 }
 
 type FileUpload struct {
-	Md5       string    `json:"key,omitempty" gorm:"type:varchar(255);primary_key"`
+	Md5       string    `json:"md5,omitempty" gorm:"type:varchar(255);primary_key"`
 	URL       string    `json:"url,omitempty" gorm:"type:varchar(255);not null"`
 	CreatedAt time.Time `json:"created_at,omitempty" gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP"`
 }
@@ -30,8 +26,8 @@ func (FileUpload) TableName() string {
 
 func init() {
 	db := durables.NewDB()
-	session.WithDatabase(&Ctx, db)
 	db.AutoMigrate(
 		&User{},
+		&FileUpload{},
 	)
 }
